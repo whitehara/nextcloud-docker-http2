@@ -1,0 +1,8 @@
+[submodule "nextcloud"]
+	path = nextcloud
+	url = https://github.com/nextcloud/docker
+	ignore = dirty
+[submodule "php"]
+	path = php
+	url = https://github.com/docker-library/php
+	ignore = dirty
