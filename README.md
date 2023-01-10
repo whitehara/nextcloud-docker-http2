@@ -2,6 +2,8 @@
 HTTP/2, PHP-FPM and Samba client enabled Nextcloud docker image
 ## What's this?
 This docker image is Nextcloud image which is enabled HTTP/2, PHP-FPM and Samba client with small memory tweaks.
+
+This image is used to learn how it works. If you want to get product ready one, I recommend to use https://github.com/nextcloud/all-in-one
 ## How to build docker image?
 ```
 git clone https://github.com/whitehara/nextcloud-docker-http2 .
@@ -40,7 +42,38 @@ The last part is customized nextcloud. It is based on the 2nd image. The additio
 
 - Install supervisor (for cron and php-fpm)
 - Install smbclient (Samba client)
-- Enable php-fpm
-- Tune APCu shared memory size to 128M (default=32M)  
-- Disable mpm_prefork &Enable mpm_event
-- Enable HTTP/s
+- Enable php-fpm (ondemand)
+  - You can change parameters by environments below.
+    - pm.max_children: PHP_FPM_MAX_CHILDREN (default value:5)
+    - pm.process_idle_timeout: PHP_FPM_PROCESS_IDLE_TIMEOUT (default value:10s)
+    - pm.max_requests: PHP_FPM_MAX_REQUESTS (default value:400)
+- Change php max upload count
+  - You can change it by an environment below.
+    - PHP_UPLOAD_COUNT (default value:20)
+
+- Tune APCu shared memory size (original=32M)  
+  - You can change it by an environment below.
+    - PHP_APC_SHM_SIZE (default value:128M)
+
+- Enable / Disable Apache2 modules.
+  - Disabled mods
+    - access_compat
+    - reqtimeout
+    - status
+    - mpm_prefork
+    - deflate
+  - Enabled modes (This list contains some default enabled ones.)
+    - mpm_event
+    - proxy_fcgi
+    - proxy
+    - http2
+    - rewrite
+    - headers
+    - setenvif
+    - env
+    - mime 
+    - dir
+    - alias
+    - remoteip
+    - filter
+    - brotli
