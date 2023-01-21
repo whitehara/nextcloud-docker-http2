@@ -1,9 +1,9 @@
 # nextcloud-docker-http2
-HTTP/2, PHP-FPM and Samba client enabled Nextcloud docker image
+HTTP/2, PHP-FPM, Redis cache and Samba client enabled Nextcloud docker image
 ## What's this?
-This docker image is Nextcloud image which is enabled HTTP/2, PHP-FPM and Samba client with small memory tweaks.
+This docker image is Nextcloud image which is enabled HTTP/2, PHP-FPM, Redis cache and Samba client with small memory tweaks.
 
-This image is used to learn how it works. If you want to get product ready one, I recommend to use https://github.com/nextcloud/all-in-one
+This image is used to learn how it works. If you want to get the production ready one, I recommend to use https://github.com/nextcloud/all-in-one
 ## How to build docker image?
 ```
 git clone https://github.com/whitehara/nextcloud-docker-http2 .
@@ -55,6 +55,21 @@ The last part is customized nextcloud. It is based on the 2nd image. The additio
   - You can change it by an environment below.
     - PHP_APC_SHM_SIZE (default value:128M)
 
+- Make local cache dir .You can use the fllolwing settings in the config/config.php
+  ```
+    'cache_path' => '/var/www/nxc_cache',
+  ```
+- Install Redis Server
+  - You can use it to write the following settings in the config/config.php
+  ```
+    'memcache.distributed' => '\OC\Memcache\Redis',
+  'redis' => [
+	'host'     => '/var/run/redis/redis-server.sock',
+	'port'     => 0,
+	'dbindex'  => 0,
+	'timeout'  => 1.5,
+  ],
+  ```
 - Enable / Disable Apache2 modules.
   - Disabled mods
     - access_compat

@@ -3,7 +3,7 @@
 FROM local-nextcloud:25-apache-zts
 
 RUN apt-get update && apt-get install -y \
-    supervisor procps smbclient imagemagick \
+    supervisor procps smbclient redis-server imagemagick \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir /var/log/supervisord /var/run/supervisord
 
@@ -15,6 +15,14 @@ childlogdir=/var/log/supervisord/\n\
 logfile_maxbytes=50MB                           ; maximum size of logfile before rotation\n\
 logfile_backups=10                              ; number of backed up logfiles\n\
 loglevel=error\n\
+\n\
+[program:redis-server]\n\
+stdout_logfile=/dev/stdout\n\
+stdout_logfile_maxbytes=0\n\
+stderr_logfile=/dev/stderr\n\
+stderr_logfile_maxbytes=0\n\
+user=redis\n\
+command=redis-server /etc/redis/redis.conf\n\
 \n\
 [program:php-fpm]\n\
 stdout_logfile=/dev/stdout\n\
@@ -72,7 +80,24 @@ RUN echo "apc.shm_size = ${PHP_APC_SHM_SIZE}" >> /usr/local/etc/php/conf.d/docke
 
 ENV PHP_APC_SHM_SIZE=128M
 
+# Make local cache dir
+# You can use it in config.php > config_path
+RUN mkdir -p /var/www/nxc_cache && chown www-data /var/www/nxc_cache
+
+# Install redis using with unixsocket
+RUN mkdir -p /var/run/redis && chown redis:redis /var/run/redis
+RUN sed -i -e "s/^\(port\) .*/\1 0/g" \
+          -e "s/^\(daemonize\) .*/\1 no/g" \
+          -e "s!^\(logfile\) .*!\1 ''!g" \
+          -e "s/^\(always-show-logo\) .*/\1 no/g" \
+          -e "s/^# \(unixsocket \)/\1/g" \
+          -e "s/^# \(unixsocketperm\) .*/\1 770/g" \
+          -e "s/^\(save .*\)/# \1/g" \
+          /etc/redis/redis.conf
+RUN usermod -a -G redis www-data
+
 # Enable PDF preview
+# You can use it with modifying config.php
 RUN sed -i -e "s/\(domain=\"coder\" rights=\"\)none\(\" pattern=\"PDF\)/\1read\|write\2/g" /etc/ImageMagick-6/policy.xml
 
 # Enable max upload files count
