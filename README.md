@@ -33,7 +33,7 @@ And add these compile options.
   - --with-fpm-group=www-data
 
 ### 2.nextcloud
-The 2nd part is nextcloud. It is originaly from https://github.com/nextcloud/docker/tree/master/25/apache
+The 2nd part is nextcloud. It is originaly from https://github.com/nextcloud/docker/tree/master/26/apache
 
 There is no extra customize. Just use the 1st php image.
 

@@ -1,6 +1,6 @@
 # ADD CRON and SMBCLIENT
 # see https://github.com/nextcloud/docker/tree/master/.examples/dockerfiles
-FROM local-nextcloud:25-apache-zts
+FROM local-nextcloud:26-apache-zts
 
 RUN apt-get update && apt-get install -y \
     supervisor procps smbclient redis-server imagemagick \
