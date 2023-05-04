@@ -4,7 +4,15 @@ HTTP/2, PHP-FPM, Redis cache and Samba client enabled Nextcloud docker image
 This docker image is Nextcloud image which is enabled HTTP/2, PHP-FPM, Redis cache and Samba client with small memory tweaks.
 
 This image is used to learn how it works. If you want to get the production ready one, I recommend to use https://github.com/nextcloud/all-in-one
-## How to build docker image?
+
+## Use it from dockerhub
+```
+docker run -d -p 8080:80 whitehara/nextcloud-docker-http2
+```
+Now you can access Nextcloud at http://localhost:8080/ from your host system.
+
+You may need to add some options for using, please see: https://github.com/nextcloud/docker
+## How to build your customized docker image?
 ```
 git clone https://github.com/whitehara/nextcloud-docker-http2 .
 cd nextcloud-docker-http2
@@ -12,9 +20,6 @@ cd nextcloud-docker-http2
 ```
 You get "nextcloud-custom" image.
 
-## How to run the docker image
-You can run this image like the normal nextcloud image.
-Please see: https://github.com/nextcloud/docker
 
 ## Details
 This docker image is based on three parts.
