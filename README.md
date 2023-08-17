@@ -64,10 +64,12 @@ The last part is customized nextcloud. It is based on the 2nd image. The additio
   ```
     'cache_path' => '/var/www/nxc_cache',
   ```
-- Install Redis Server
+- Setup Redis Server
   - You can use it to write the following settings in the config/config.php
   ```
-    'memcache.distributed' => '\OC\Memcache\Redis',
+  'filelocking.enabled' => true,
+  'memcache.locking' => '\\OC\Memcache\Redis',
+  'memcache.distributed' => '\\OC\Memcache\Redis',
   'redis' => [
 	'host'     => '/var/run/redis/redis-server.sock',
 	'port'     => 0,
