@@ -51,7 +51,7 @@ jobs:
 
       - name: Run build.sh
         id: build
-        run: ./build.sh
+        run: bash ./build.sh
         shell: bash
 
       # Build and push Docker image with Buildx (don't push on PR)
