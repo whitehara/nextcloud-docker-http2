@@ -42,6 +42,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Nextcloud version check
+        id: vercheck
+        run: echo "ver=$(cat nextcloud/latest.txt)" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -49,7 +54,7 @@ jobs:
           images: |
             whithara/nextcloud-docker-http2
           tags: |
-            type=semver,pattern={{version}}
+            type=semver,pattern={{version}},value=${{ steps.vercheck.outputs.ver }}
 
       - name: Run build.sh
         id: build
