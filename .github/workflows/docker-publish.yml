@@ -129,8 +129,8 @@ jobs:
         shell: bash
 
       - name: Docker Nextcloud-custom meta
-        id: meta
-        uses: docker/metadata-action@v5${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
+        id: meta-nextcloud-custom
+        uses: docker/metadata-action@v5
         with:
           images: |
             whithara/nextcloud-docker-http2
