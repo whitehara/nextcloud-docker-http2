@@ -75,23 +75,14 @@ jobs:
             php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile
         shell: bash
 
-      - name: Docker PHP meta
-        id: meta-php
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            localhost:5000/whitehara/local-php
-          tags: |
-            type=raw,value=${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
-
       - name: Build PHP Docker local image
         id: build-php
         uses: docker/build-push-action@v5
         with:
           context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          push: false
+          load: true
+          tags: localhost:5000/whitehara/local-php:${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
