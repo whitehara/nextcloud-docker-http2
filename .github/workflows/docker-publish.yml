@@ -95,23 +95,14 @@ jobs:
             nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile
         shell: bash
 
-      - name: Docker Nextcloud meta
-        id: meta-nextcloud
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            whitehara/local-nextcloud
-          tags: |
-            type=raw,value=${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts
-
       - name: Build Nextcloud Docker image
         id: build-nextcloud
         uses: docker/build-push-action@v5
         with:
           context: ./nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          push: false
+          load: true
+          tags: localhost:5000/whitehara/local-nextcloud:${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
