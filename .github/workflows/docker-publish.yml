@@ -11,6 +11,8 @@ on:
 env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  # Web server application name
+  APP_NAME: apache
 
 
 jobs:
@@ -55,7 +57,7 @@ jobs:
         run: |
           sed -e "s/^FROM php:\(.*\)-\(.*\)-\(.*\)/version=\1\napp=\2\ndebian=\3/p" \
             -e d \
-            nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile >> $GITHUB_OUTPUT
+            nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/$APP_NAME/Dockerfile >> $GITHUB_OUTPUT
         shell: bash
 
       - name: PHP Dockerfile modify
