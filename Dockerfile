@@ -1,6 +1,6 @@
 # ADD CRON and SMBCLIENT
 # see https://github.com/nextcloud/docker/tree/master/.examples/dockerfiles
-FROM local-nextcloud:27-apache-zts
+FROM local-nextcloud
 
 # For getting the newest redis-server
 RUN apt-get update && apt-get install -y lsb-release gpg && \
