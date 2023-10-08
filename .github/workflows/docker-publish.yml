@@ -77,7 +77,7 @@ jobs:
           images: |
             local-php
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
+            type=raw,value=${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
 
       - name: Build PHP Docker local image
         id: build-php
@@ -107,7 +107,7 @@ jobs:
           images: |
             local-nextcloud
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts
+            type=raw,value=${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts
 
       - name: Build Nextcloud Docker image
         id: build-nextcloud
