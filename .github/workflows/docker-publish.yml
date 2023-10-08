@@ -76,13 +76,16 @@ jobs:
         with:
           images: |
             local-php
+          tags: |
+            type=semver,pattern={{version}},value=${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
 
-      - name: Build PHP Docker image
+      - name: Build PHP Docker local image
         id: build-php
         uses: docker/build-push-action@v5
         with:
           context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}
           push: false
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -91,7 +94,7 @@ jobs:
       - name: Nextcloud Dockerfile modify
         id: modify-nextcloud
         run: |
-          sed -i -e "s!FROM .*!FROM local-php!g" \
+          sed -i -e "s!FROM .*!FROM local-php:${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}!g" \
             -e "s/\(gnupg\)/\1 aria2/g" \
             -e "s/curl -fsSL/aria2c -x8/g" \
             nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile
@@ -103,6 +106,8 @@ jobs:
         with:
           images: |
             local-nextcloud
+          tags: |
+            type=semver,pattern={{version}},value=${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts
 
       - name: Build Nextcloud Docker image
         id: build-nextcloud
@@ -110,14 +115,22 @@ jobs:
         with:
           context: ./nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}
           push: false
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Nextcloud Dockerfile modify
+        id: modify-nextcloud-custom
+        run: |
+          sed -i -e "s!FROM .*!FROM local-nextcloud:${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts!g" \
+            ./Dockerfile
+        shell: bash
+
       - name: Docker Nextcloud-custom meta
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v5${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
         with:
           images: |
             whithara/nextcloud-docker-http2
