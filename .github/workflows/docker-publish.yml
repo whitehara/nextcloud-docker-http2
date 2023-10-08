@@ -80,8 +80,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}
-          push: false
-          load: true
+          push: true
           tags: localhost:5000/whitehara/local-php:${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -100,8 +99,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}
-          push: false
-          load: true
+          push: true
           tags: localhost:5000/whitehara/local-nextcloud:${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts
           cache-from: type=gha
           cache-to: type=gha,mode=max
