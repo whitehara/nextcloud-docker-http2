@@ -55,7 +55,7 @@ jobs:
         run: |
           sed -e "s/^FROM php:\(.*\)-\(.*\)-\(.*\)/version=\1\napp=\2\ndebian=\3/p" \
             -e d \
-            nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/apache/Dockerfile >> $GITHUB_OUTPUT
+            nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile >> $GITHUB_OUTPUT
         shell: bash
 
       - name: PHP Dockerfile modify
@@ -79,7 +79,7 @@ jobs:
         id: build-php
         uses: docker/build-push-action@v5
         with:
-          context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}
+          context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
