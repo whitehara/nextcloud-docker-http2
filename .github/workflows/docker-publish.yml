@@ -90,7 +90,6 @@ jobs:
         with:
           context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}
           push: true
-          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -120,7 +119,6 @@ jobs:
         with:
           context: ./nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}
           push: true
-          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
