@@ -43,26 +43,85 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Nextcloud version check
-        id: vercheck
-        run: echo "ver=$(cat nextcloud/latest.txt)" >> $GITHUB_OUTPUT
+        id: vercheck-nextcloud
+        run: |
+          sed -e "s/\(\([0-9]*\)\..*\)/version=\1\nmversion=\2/p" \
+            -e d \
+            nextcloud/latest.txt >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Docker meta
+      - name: PHP version check
+        id: vercheck-php
+        run: |
+          sed -e "s/^FROM php:\(.*\)-\(.*\)-\(.*\)/version=\1\napp=\2\ndebian=\3/p" \
+            -e d \
+            nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/apache/Dockerfile >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: PHP Dockerfile modify
+        id: modify-php
+        run: |
+          sed -i \
+            -e "s/\(--with-apxs2\)/\1 --enable-zts --disable-zend-signals --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data /g" \
+            -e "s/\(gnupg\)/\1 aria2/g" \
+            -e "s/curl -fsSL/aria2c -x8/g" \
+            php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/Dockerfile
+        shell: bash
+
+      - name: Docker PHP meta
+        id: meta-php
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            local-php
+
+      - name: Build PHP Docker image
+        id: build-php
+        uses: docker/build-push-action@v5
+        with:
+          context: ./php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Nextcloud Dockerfile modify
+        id: modify-nextcloud
+        run: |
+          sed -i -e "s!FROM .*!FROM local-php!g" \
+            -e "s/\(gnupg\)/\1 aria2/g" \
+            -e "s/curl -fsSL/aria2c -x8/g" \
+            nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile
+        shell: bash
+
+      - name: Docker Nextcloud meta
+        id: meta-nextcloud
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            local-nextcloud
+
+      - name: Build Nextcloud Docker image
+        id: build-nextcloud
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Docker Nextcloud-custom meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
             whithara/nextcloud-docker-http2
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.vercheck.outputs.ver }}
-
-      - name: Run build.sh
-        id: build
-        run: bash ./build.sh
-        shell: bash
-
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
+            type=semver,pattern={{version}},value=${{ steps.vercheck-nextcloud.outputs.version }}
+                  
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v5
@@ -71,3 +130,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
