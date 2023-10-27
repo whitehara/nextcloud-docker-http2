@@ -98,7 +98,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Nextcloud Dockerfile modify
+      - name: Nextcloud-custom Dockerfile modify
         id: modify-nextcloud-custom
         run: |
           sed -i -e "s!FROM .*!FROM localhost:5000/${{ github.repository_owner }}/local-nextcloud:${{ steps.vercheck-nextcloud.outputs.mversion }}-${{ steps.vercheck-php.outputs.app }}-zts!g" \

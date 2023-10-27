@@ -14,7 +14,7 @@ Now you can access Nextcloud at http://localhost:8080/ from your host system.
 You may need to add some options for using, please see: https://github.com/nextcloud/docker
 ## How to build your customized docker image?
 ```
-git clone https://github.com/whitehara/nextcloud-docker-http2 .
+git clone --recurse-submodules https://github.com/whitehara/nextcloud-docker-http2 .
 cd nextcloud-docker-http2
 ./build.sh
 ```
