@@ -4,9 +4,7 @@ on:
   push:
     branches-ignore: [ "*" ]
     # Publish semver tags as releases.
-    tags: [ '*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
+    tags: [ '*' ]
 
 env:
   # Web server application name
