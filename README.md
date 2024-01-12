@@ -25,7 +25,7 @@ You get "nextcloud-custom" image.
 This docker image is based on three parts.
 
 ### 1. php
-The 1st part is customized php. It is originaly from https://github.com/docker-library/php/tree/master/8.1/bullseye/apache
+The 1st part is customized php. It is originaly from https://github.com/docker-library/php/tree/master/8.2/bullseye/apache
 
 And add these compile options.
 
@@ -36,9 +36,11 @@ And add these compile options.
   - --enable-fpm
   - --with-fpm-user=www-data
   - --with-fpm-group=www-data
+  for bzip2
+  - --with-bz2
 
 ### 2.nextcloud
-The 2nd part is nextcloud. It is originaly from https://github.com/nextcloud/docker/tree/master/26/apache
+The 2nd part is nextcloud. It is originaly from https://github.com/nextcloud/docker/tree/master/28/apache
 
 There is no extra customize. Just use the 1st php image.
 
@@ -74,7 +76,6 @@ The last part is customized nextcloud. It is based on the 2nd image. The additio
 	'host'     => '/var/run/redis/redis-server.sock',
 	'port'     => 0,
 	'dbindex'  => 0,
-	'timeout'  => 1.5,
   ],
   ```
 - Enable / Disable Apache2 modules.
