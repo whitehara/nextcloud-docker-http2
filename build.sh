@@ -9,7 +9,7 @@ function build_php () {
 	# Update the repository
 	(cd php; git reset --hard; git pull https://github.com/docker-library/php/ master)
 	# Modify Dockerfile
-	sed -i -e "s/\(--with-apxs2\)/\1 --enable-zts --disable-zend-signals --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data /g" \
+	sed -i -e "s/\(--with-apxs2\)/\1 --enable-zts --disable-zend-signals --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --with-bz2 /g" \
 		-e "s/\(gnupg\)/\1 aria2/g" \
 		-e "s/curl -fsSL/aria2c -x8/g" \
 		$PHP_DIR/Dockerfile
