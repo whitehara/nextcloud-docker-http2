@@ -60,12 +60,12 @@ RUN a2dismod access_compat reqtimeout status mpm_prefork ;\
 # Tune HTTP/2
 RUN sed -i -e "s!</IfModule>!    H2WindowSize 1048576\n    H2StreamMaxMemSize 5120000000\n</IfModule>!g" /etc/apache2/mods-enabled/http2.conf
 
-RUN echo "<IfModule mod_rewrite.c>
-  RewriteEngine on
-  RewriteRule ^/\.well-known/carddav /remote.php/dav [R=301,L]
-  RewriteRule ^/\.well-known/caldav /remote.php/dav [R=301,L]
-  RewriteRule ^/\.well-known/webfinger /index.php/.well-known/webfinger [R=301,L]
-  RewriteRule ^/\.well-known/nodeinfo /index.php/.well-known/nodeinfo [R=301,L]
+RUN echo "<IfModule mod_rewrite.c>\n\
+  RewriteEngine on\n\
+  RewriteRule ^/\.well-known/carddav /remote.php/dav [R=301,L]\n\
+  RewriteRule ^/\.well-known/caldav /remote.php/dav [R=301,L]\n\
+  RewriteRule ^/\.well-known/webfinger /index.php/.well-known/webfinger [R=301,L]\n\
+  RewriteRule ^/\.well-known/nodeinfo /index.php/.well-known/nodeinfo [R=301,L]\n\
 </IfModule>" > /etc/apache2/mods-enabled/rewrite.conf
 
 # enable FastCGI
