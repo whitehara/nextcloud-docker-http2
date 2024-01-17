@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y lsb-release gpg && \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps;
 
 RUN apt-get update && apt-get install -y \
-    supervisor procps smbclient redis-server imagemagick \
+    supervisor procps smbclient redis-stack-server imagemagick \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir /var/log/supervisord /var/run/supervisord
