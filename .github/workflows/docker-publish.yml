@@ -61,7 +61,8 @@ jobs:
         id: modify-php
         run: |
           sed -i \
-            -e "s/\(--with-apxs2\)/\1 --enable-zts --disable-zend-signals --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data /g" \
+            -e "s/\(--with-apxs2\)/\1 --enable-zts --disable-zend-signals --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --with-bz2/g" \
+            -e "s/\(zlib1g-dev\)/\1 libbz2-dev/g" \
             -e "s/\(gnupg\)/\1 aria2/g" \
             -e "s/curl -fsSL/aria2c -x8/g" \
             php/${{ steps.vercheck-php.outputs.version }}/${{ steps.vercheck-php.outputs.debian }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile
