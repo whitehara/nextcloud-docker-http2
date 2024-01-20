@@ -2,6 +2,9 @@
 # see https://github.com/nextcloud/docker/tree/master/.examples/dockerfiles
 FROM local-nextcloud
 
+# Delete PHP source
+RUN rm /usr/src/php.tar.xz*
+
 # For getting the newest redis-server
 RUN apt-get update && apt-get install -y lsb-release gpg && \
 	echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" > /etc/apt/sources.list.d/redis.list && \
@@ -9,7 +12,7 @@ RUN apt-get update && apt-get install -y lsb-release gpg && \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps;
 
 RUN apt-get update && apt-get install -y \
-    supervisor procps smbclient redis imagemagick \
+    supervisor procps smbclient redis imagemagick ffmpeg \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir /var/log/supervisord /var/run/supervisord
