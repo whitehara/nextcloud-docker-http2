@@ -116,9 +116,9 @@ RUN mkdir -p /var/run/redis && chown redis:redis /var/run/redis ;\
 	( echo 'session.save_handler=redis' ;\
 	  echo 'session.save_path="unix:///var/run/redis/redis-server.sock"' ;\
 	  echo 'redis.session.locking_enabled=1' ;\
-	  echo 'redis.session.lock_retries=1' ;\
+	  echo 'redis.session.lock_retries=-1' ;\
 	  echo 'redis.session.lock_wait_time=10000' ;\
-      ) >> /usr/local/etc/php/conf.d/docker-php-ext-redis.ini
+      ) >> /usr/local/etc/php/conf.d/redis-session.ini
 
 # Enable PDF preview
 # You can use it with modifying config.php
