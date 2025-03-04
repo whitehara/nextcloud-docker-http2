@@ -1,9 +1,16 @@
 #!/bin/sh
 
+### Envionment ###
+
+NEXTCLOUD_VER=`awk -F'.' '{print $1}' nextcloud/latest.txt`
+NEXTCLOUD_TAG=local-nextcloud:$NEXTCLOUD_VER-apache-zts
+NEXTCLOUD_DIR=./nextcloud/$NEXTCLOUD_VER/apache/
+PHP_VER=`sed -e "s/FROM php:\([0-9\.]*\)-apache-\(.*\)/\1/p" -e d $NEXTCLOUD_DIR/Dockerfile`
+PHP_DEBIAN=`sed -e "s/FROM php:\([0-9\.]*\)-apache-\(.*\)/\2/p" -e d $NEXTCLOUD_DIR/Dockerfile`
+PHP_TAG=local-php:$PHP_VER-apache-zts-$PHP_DEBIAN
+PHP_DIR=./php/$PHP_VER/$PHP_DEBIAN/apache
+
 ### 1st stage: php ###
-PHP_VER=8.2
-PHP_TAG=local-php:$PHP_VER-apache-zts-bullseye
-PHP_DIR=./php/$PHP_VER/bullseye/apache/
 
 function build_php () {
 	# Update the repository
@@ -19,9 +26,6 @@ function build_php () {
 }
 
 ### 2nd stage: nextcloud ###
-NEXTCLOUD_VER=`awk -F'.' '{print $1}' nextcloud/latest.txt`
-NEXTCLOUD_TAG=local-nextcloud:$NEXTCLOUD_VER-apache-zts
-NEXTCLOUD_DIR=./nextcloud/$NEXTCLOUD_VER/apache/
 
 function build_nextcloud () {
 	# Update the repository
