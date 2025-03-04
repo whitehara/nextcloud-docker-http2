@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# This script is not used on GitHub Actions.
+# It is used to build the image locally.
+
 ### Envionment ###
 
 NEXTCLOUD_VER=`awk -F'.' '{print $1}' nextcloud/latest.txt`
@@ -32,7 +35,7 @@ function build_nextcloud () {
 	(cd nextcloud; git reset --hard; git pull https://github.com/nextcloud/docker/ master)
 	# Modify Dockerfile for faster download
 	sed -i -e "s!FROM .*!FROM $PHP_TAG!g" \
-		-e "s/\(rsync\)/\1 aria2/g" \
+		-e "s/\(rsync\)/\1 aria2/" \
 		-e "s/curl -fsSL/aria2c -x8/g" \
 		$NEXTCLOUD_DIR/Dockerfile
 	# Build

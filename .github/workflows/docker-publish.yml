@@ -82,7 +82,7 @@ jobs:
         id: modify-nextcloud
         run: |
           sed -i -e "s!FROM .*!FROM localhost:5000/whitehara/local-php:${{ steps.vercheck-php.outputs.version }}-${{ steps.vercheck-php.outputs.app }}-zts-${{ steps.vercheck-php.outputs.debian }}!g" \
-            -e "s/\(gnupg\)/\1 aria2/g" \
+            -e "s/\(rsync\)/\1 aria2/g" \
             -e "s/curl -fsSL/aria2c -x8/g" \
             nextcloud/${{ steps.vercheck-nextcloud.outputs.mversion }}/${{ steps.vercheck-php.outputs.app }}/Dockerfile
         shell: bash
