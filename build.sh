@@ -32,7 +32,7 @@ function build_nextcloud () {
 	(cd nextcloud; git reset --hard; git pull https://github.com/nextcloud/docker/ master)
 	# Modify Dockerfile for faster download
 	sed -i -e "s!FROM .*!FROM $PHP_TAG!g" \
-		-e "s/\(gnupg\)/\1 aria2/g" \
+		-e "s/\(rsync\)/\1 aria2/g" \
 		-e "s/curl -fsSL/aria2c -x8/g" \
 		$NEXTCLOUD_DIR/Dockerfile
 	# Build
