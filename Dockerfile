@@ -17,13 +17,13 @@ RUN apt-get update && apt-get install -y \
     supervisor procps smbclient valkey-server imagemagick ffmpeg \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
-  && mkdir /var/log/supervisord /var/run/supervisord
+  && mkdir /var/run/supervisor
 
 RUN echo "[supervisord]\n\
 nodaemon=true\n\
 logfile=/var/log/supervisor/supervisord.log\n\
 pidfile=/var/run/supervisor/supervisord.pid\n\
-childlogdir=/var/log/supervisord/\n\
+childlogdir=/var/log/supervisor/\n\
 logfile_maxbytes=50MB                           ; maximum size of logfile before rotation\n\
 logfile_backups=10                              ; number of backed up logfiles\n\
 loglevel=error\n\
