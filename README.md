@@ -73,7 +73,7 @@ The last part is customized nextcloud. It is based on the 2nd image. The additio
   'memcache.locking' => '\\OC\Memcache\Redis',
   'memcache.distributed' => '\\OC\Memcache\Redis',
   'redis' => [
-	'host'     => '/var/run/redis/redis-server.sock',
+	'host'     => '/var/run/valkey/valkey-server.sock',
 	'port'     => 0,
 	'dbindex'  => 0,
   ],
