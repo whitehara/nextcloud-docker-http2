@@ -5,14 +5,8 @@ FROM local-nextcloud
 # Delete PHP source
 RUN rm /usr/src/php.tar.xz*
 
-# For getting the newest redis-server
-RUN apt-get update && apt-get install -y lsb-release gpg && \
-	echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" > /etc/apt/sources.list.d/redis.list && \
-	curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg && \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps;
-
 RUN apt-get update && apt-get install -y \
-    supervisor procps smbclient redis imagemagick ffmpeg \
+    supervisor procps smbclient valkey valkey-compat imagemagick ffmpeg \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir /var/log/supervisord /var/run/supervisord
@@ -102,7 +96,7 @@ RUN echo "apc.shm_size=\${PHP_APC_SHM_SIZE}" >> /usr/local/etc/php/conf.d/docker
 # You can use it in config.php > config_path
 RUN mkdir -p /var/www/nxc_cache && chown www-data /var/www/nxc_cache
 
-# Setup redis using with unixsocket
+# Setup valkey using with unixsocket
 RUN mkdir -p /var/run/redis && chown redis:redis /var/run/redis ;\
 	sed -i -e "s/^\(port\) .*/\1 0/g" \
           -e "s/^\(daemonize\) .*/\1 no/g" \

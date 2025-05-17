@@ -1,7 +1,7 @@
 # nextcloud-docker-http2
-HTTP/2, PHP-FPM, Redis cache and Samba client enabled Nextcloud docker image
+HTTP/2, PHP-FPM, Valkey cache and Samba client enabled Nextcloud docker image
 ## What's this?
-This docker image is Nextcloud image which is enabled HTTP/2, PHP-FPM, Redis cache and Samba client with small memory tweaks.
+This docker image is Nextcloud image which is enabled HTTP/2, PHP-FPM, Valkey cache and Samba client with small memory tweaks.
 
 This image is used to learn how it works. If you want to get the production ready one, I recommend to use https://github.com/nextcloud/all-in-one
 
@@ -66,7 +66,7 @@ The last part is customized nextcloud. It is based on the 2nd image. The additio
   ```
     'cache_path' => '/var/www/nxc_cache',
   ```
-- Setup Redis Server
+- Setup Valkey Server
   - You can use it to write the following settings in the config/config.php
   ```
   'filelocking.enabled' => true,
