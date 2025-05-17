@@ -28,13 +28,13 @@ logfile_maxbytes=50MB                           ; maximum size of logfile before
 logfile_backups=10                              ; number of backed up logfiles\n\
 loglevel=error\n\
 \n\
-[program:redis-server]\n\
+[program:valkey-server]\n\
 stdout_logfile=/dev/stdout\n\
 stdout_logfile_maxbytes=0\n\
 stderr_logfile=/dev/stderr\n\
 stderr_logfile_maxbytes=0\n\
-user=redis\n\
-command=redis-server /etc/redis/redis.conf\n\
+user=valkey\n\
+command=valkey-server /etc/valkey/valkey.conf\n\
 \n\
 [program:php-fpm]\n\
 stdout_logfile=/dev/stdout\n\
@@ -105,18 +105,18 @@ RUN echo "apc.shm_size=\${PHP_APC_SHM_SIZE}" >> /usr/local/etc/php/conf.d/docker
 RUN mkdir -p /var/www/nxc_cache && chown www-data /var/www/nxc_cache
 
 # Setup valkey using with unixsocket
-RUN mkdir -p /var/run/redis && chown redis:redis /var/run/redis ;\
+RUN mkdir -p /var/run/valkey && chown valkey:valkey /var/run/valkey ;\
 	sed -i -e "s/^\(port\) .*/\1 0/g" \
           -e "s/^\(daemonize\) .*/\1 no/g" \
           -e "s!^\(logfile\) .*!\1 ''!g" \
           -e "s/^\(always-show-logo\) .*/\1 no/g" \
-          -e "s!^# \(unixsocket \).*!\1/var/run/redis/redis-server.sock!g" \
+          -e "s!^# \(unixsocket \).*!\1/var/run/valkey/valkey-server.sock!g" \
           -e "s/^# \(unixsocketperm\) .*/\1 770/g" \
           -e "s/^\(save .*\)/# \1/g" \
-          /etc/redis/redis.conf ;\
-	usermod -a -G redis www-data ;\
+          /etc/valkey/valkey.conf ;\
+	usermod -a -G valkey www-data ;\
 	( echo 'session.save_handler=redis' ;\
-	  echo 'session.save_path="unix:///var/run/redis/redis-server.sock"' ;\
+	  echo 'session.save_path="unix:///var/run/valkey/valkey-server.sock"' ;\
 	  echo 'redis.session.locking_enabled=1' ;\
 	  echo 'redis.session.lock_retries=-1' ;\
 	  echo 'redis.session.lock_wait_time=10000' ;\
