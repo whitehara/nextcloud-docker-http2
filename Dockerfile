@@ -6,7 +6,7 @@ FROM local-nextcloud
 RUN rm /usr/src/php.tar.xz*
 
 RUN apt-get update && apt-get install -y \
-    supervisor procps smbclient valkey valkey-compat imagemagick ffmpeg \
+    supervisor procps smbclient valkey-server imagemagick ffmpeg \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir /var/log/supervisord /var/run/supervisord
