@@ -7,12 +7,6 @@ RUN rm /usr/src/php.tar.xz*
 
 FROM oven/bun:1-debian
 
-# Enable backports for valkey-server
-RUN export $(cat /etc/os-release | grep VERSION_CODENAME) \
- && echo "deb http://deb.debian.org/debian ${VERSION_CODENAME} main" >> /etc/apt/sources.list \
- && apt update \
- && apt install -y --no-install-recommends -t ${VERSION_CODENAME}
-
 RUN apt-get update && apt-get install -y \
     supervisor procps smbclient valkey-server imagemagick ffmpeg \
   && apt-get clean \
