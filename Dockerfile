@@ -118,7 +118,7 @@ RUN mkdir -p /var/run/valkey && chown valkey:valkey /var/run/valkey ;\
 
 # Enable PDF preview
 # You can use it with modifying config.php
-RUN sed -i -e "s/\(domain=\"coder\" rights=\"\)none\(\" pattern=\"PDF\)/\1read\|write\2/g" /etc/ImageMagick-6/policy.xml
+RUN sed -i -e "s/\(domain=\"coder\" rights=\"\)none\(\" pattern=\"PDF\)/\1read\|write\2/g" /etc/ImageMagick-7/policy.xml
 
 # Enable max upload files count
 RUN echo "max_file_uploads=\${PHP_UPLOAD_COUNT}" >> /usr/local/etc/php/conf.d/nextcloud.ini
