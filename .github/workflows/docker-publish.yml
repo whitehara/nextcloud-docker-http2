@@ -5,6 +5,8 @@ on:
     branches-ignore: [ "*" ]
     # Publish semver tags as releases.
     tags: [ '*' ]
+  schedule:
+    - cron: '0 18 * * 6'
 
 env:
   # Web server application name
@@ -12,7 +14,45 @@ env:
 
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      updated: ${{ steps.check.outputs.updated }}
+      sha: ${{ steps.check.outputs.sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Check for updates
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            git submodule update --remote nextcloud
+            if git diff --quiet nextcloud/latest.txt; then
+              echo "updated=false" >> $GITHUB_OUTPUT
+              echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+            else
+              echo "updated=true" >> $GITHUB_OUTPUT
+              git submodule update --remote php
+              git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git add nextcloud php
+              git commit -m "chore: update nextcloud and php submodules"
+              git push
+              echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "updated=true" >> $GITHUB_OUTPUT
+            echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.updated == 'true'
     services:
       registry:
         image: registry:2
@@ -31,6 +71,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.check.outputs.sha }}
           submodules: true
 
       - name: Set up QEMU
