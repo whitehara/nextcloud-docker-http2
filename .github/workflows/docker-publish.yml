@@ -7,6 +7,7 @@ on:
     tags: [ '*' ]
   schedule:
     - cron: '0 18 * * 6'
+  workflow_dispatch:
 
 env:
   # Web server application name
@@ -30,7 +31,7 @@ jobs:
       - name: Check for updates
         id: check
         run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
+          if [ "${{ github.event_name }}" == "schedule" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             old_sha=$(git -C nextcloud rev-parse HEAD)
             git submodule update --remote nextcloud
             if git -C nextcloud diff --quiet "$old_sha" HEAD -- latest.txt; then
