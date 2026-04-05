@@ -31,8 +31,9 @@ jobs:
         id: check
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
+            old_sha=$(git -C nextcloud rev-parse HEAD)
             git submodule update --remote nextcloud
-            if git diff --quiet nextcloud/latest.txt; then
+            if git -C nextcloud diff --quiet "$old_sha" HEAD -- latest.txt; then
               echo "updated=false" >> $GITHUB_OUTPUT
               echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
             else
