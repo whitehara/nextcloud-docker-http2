@@ -127,4 +127,25 @@ ENV PHP_UPLOAD_COUNT=20
 
 ENV NEXTCLOUD_UPDATE=1
 
-CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+# Wrapper entrypoint: start Valkey before occ upgrade, then hand off to supervisord
+RUN echo "#!/bin/sh\n\
+set -eu\n\
+\n\
+# Start Valkey temporarily (occ upgrade needs memcache/locking)\n\
+mkdir -p /var/run/valkey && chown valkey:valkey /var/run/valkey\n\
+su -s /bin/sh valkey -c 'valkey-server /etc/valkey/valkey.conf --daemonize yes'\n\
+\n\
+# Wait for socket\n\
+timeout=50\n\
+while [ ! -S /var/run/valkey/valkey-server.sock ] && [ \$timeout -gt 0 ]; do\n\
+  sleep 0.1; timeout=\$((timeout - 1))\n\
+done\n\
+\n\
+# Run original entrypoint (\"true\" makes exec \"\$@\" exit immediately)\n\
+/entrypoint.sh true\n\
+\n\
+# Stop temporary Valkey, then start supervisord\n\
+valkey-cli -s /var/run/valkey/valkey-server.sock shutdown 2>/dev/null || true\n\
+exec /usr/bin/supervisord -c /supervisord.conf" > /custom-entrypoint.sh && chmod +x /custom-entrypoint.sh
+
+ENTRYPOINT ["/custom-entrypoint.sh"]
