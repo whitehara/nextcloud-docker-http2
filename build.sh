@@ -37,6 +37,7 @@ function build_nextcloud () {
 	sed -i -e "s!FROM .*!FROM $PHP_TAG!g" \
 		-e "s/\(rsync\)/\1 aria2/" \
 		-e "s/curl -fsSL/aria2c -x8/g" \
+		-e "s!rm -r /tmp/pear;!rm -r /tmp/pear; rm -rf /usr/src/php /usr/src/php.tar.xz /usr/src/php.tar.xz.asc;!g" \
 		$NEXTCLOUD_DIR/Dockerfile
 	# Build
 	docker build -t $NEXTCLOUD_TAG $NEXTCLOUD_DIR

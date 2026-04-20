@@ -2,12 +2,7 @@
 # see https://github.com/nextcloud/docker/tree/master/.examples/dockerfiles
 FROM local-nextcloud
 
-# Delete PHP source
-RUN rm /usr/src/php.tar.xz*
-
-FROM oven/bun:1-debian
-
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor procps smbclient valkey-server imagemagick ffmpeg \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
@@ -90,9 +85,11 @@ ENV PHP_FPM_MAX_CHILDREN=5
 ENV PHP_FPM_PROCESS_IDLE_TIMEOUT=10s
 ENV PHP_FPM_MAX_REQUESTS=400
 
-# Tune APCu
+# Tune APCu and set PHP limits
 ENV PHP_APC_SHM_SIZE=128M
-RUN echo "apc.shm_size=\${PHP_APC_SHM_SIZE}" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
+ENV PHP_UPLOAD_COUNT=20
+RUN echo "apc.shm_size=\${PHP_APC_SHM_SIZE}" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+ && echo "max_file_uploads=\${PHP_UPLOAD_COUNT}" >> /usr/local/etc/php/conf.d/nextcloud.ini
 
 # Make local cache dir
 # You can use it in config.php > config_path
@@ -119,11 +116,6 @@ RUN mkdir -p /var/run/valkey && chown valkey:valkey /var/run/valkey ;\
 # Enable PDF preview
 # You can use it with modifying config.php
 RUN sed -i -e "s/\(domain=\"coder\" rights=\"\)none\(\" pattern=\"PDF\)/\1read\|write\2/g" /etc/ImageMagick-7/policy.xml
-
-# Enable max upload files count
-RUN echo "max_file_uploads=\${PHP_UPLOAD_COUNT}" >> /usr/local/etc/php/conf.d/nextcloud.ini
-
-ENV PHP_UPLOAD_COUNT=20
 
 ENV NEXTCLOUD_UPDATE=1
 
