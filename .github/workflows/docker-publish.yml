@@ -36,14 +36,21 @@ jobs:
         id: check
         run: |
           if [ "${{ github.event_name }}" == "schedule" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            old_sha=$(git -C nextcloud rev-parse HEAD)
-            git submodule update --remote nextcloud
-            if git -C nextcloud diff --quiet "$old_sha" HEAD -- latest.txt; then
+            old_nc=$(git -C nextcloud rev-parse HEAD)
+            old_php=$(git -C php rev-parse HEAD)
+            git submodule update --remote nextcloud php
+            nc_ver=$(cut -d. -f1 nextcloud/latest.txt)
+            php_dir=$(sed -n 's/^FROM php:\([0-9.]*\)-apache-\(.*\)/\1\/\2\/apache/p' nextcloud/$nc_ver/apache/Dockerfile)
+            # Build when Nextcloud is released or when the PHP base image Dockerfile in use changes.
+            # A failed diff (e.g. missing history) also counts as changed.
+            changed=false
+            git -C nextcloud diff --quiet "$old_nc" HEAD -- latest.txt || changed=true
+            git -C php diff --quiet "$old_php" HEAD -- "$php_dir" || changed=true
+            if [ "$changed" == "false" ]; then
               echo "updated=false" >> $GITHUB_OUTPUT
               echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
             else
               echo "updated=true" >> $GITHUB_OUTPUT
-              git submodule update --remote php
               git config user.name "github-actions[bot]"
               git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git add nextcloud php
